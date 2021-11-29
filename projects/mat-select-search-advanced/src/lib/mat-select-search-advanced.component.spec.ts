@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSelectSearchAdvancedComponent } from './mat-select-search-advanced.component';
 
 describe('MatSelectSearchAdvancedComponent', () => {
-  let component: MatSelectSearchAdvancedComponent;
-  let fixture: ComponentFixture<MatSelectSearchAdvancedComponent>;
+  let component: MatSelectSearchAdvancedComponent<any>;
+  let fixture: ComponentFixture<MatSelectSearchAdvancedComponent<any>>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

@@ -105,6 +105,99 @@
           }
         }
       }
+    },
+    "mat-preview-media": {
+      "projectType": "library",
+      "root": "projects/mat-preview-media",
+      "sourceRoot": "projects/mat-preview-media/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/mat-preview-media/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/mat-preview-media/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/mat-preview-media/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/mat-preview-media/src/test.ts",
+            "tsConfig": "projects/mat-preview-media/tsconfig.spec.json",
+            "karmaConfig": "projects/mat-preview-media/karma.conf.js"
+          }
+        }
+      }
+    },
+    "mat-select-search-advanced": {
+      "projectType": "library",
+      "root": "projects/mat-select-search-advanced",
+      "sourceRoot": "projects/mat-select-search-advanced/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/mat-select-search-advanced/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/mat-select-search-advanced/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/mat-select-search-advanced/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/mat-select-search-advanced/src/test.ts",
+            "tsConfig": "projects/mat-select-search-advanced/tsconfig.spec.json",
+            "karmaConfig": "projects/mat-select-search-advanced/karma.conf.js"
+          }
+        }
+      }
+    },
+    "mat-progress-bar": {
+      "projectType": "library",
+      "root": "projects/mat-progress-bar",
+      "sourceRoot": "projects/mat-progress-bar/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/mat-progress-bar/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/mat-progress-bar/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/mat-progress-bar/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/mat-progress-bar/src/test.ts",
+            "tsConfig": "projects/mat-progress-bar/tsconfig.spec.json",
+            "karmaConfig": "projects/mat-progress-bar/karma.conf.js"
+          }
+        }
+      }
     }
   },
   "defaultProject": "zellkon-module-angular"

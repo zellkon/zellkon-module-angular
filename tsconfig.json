@@ -9,6 +9,20 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
+    "paths": {
+      "mat-preview-media": [
+        "dist/mat-preview-media/mat-preview-media",
+        "dist/mat-preview-media"
+      ],
+      "mat-progress-bar": [
+        "dist/mat-progress-bar/mat-progress-bar",
+        "dist/mat-progress-bar"
+      ],
+      "mat-select-search-advanced": [
+        "dist/mat-select-search-advanced/mat-select-search-advanced",
+        "dist/mat-select-search-advanced"
+      ]
+    },
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,

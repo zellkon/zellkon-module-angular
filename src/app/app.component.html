@@ -39,6 +39,20 @@
       [initData] = "init"
       formControlName="selectCtrlSingle">
   </mat-select-search-advanced> -->
-  <button (click)="updateObject()">Change Array Data</button>
-  <button (click)="updateInitObject()">Change Init Array Data</button>
+  <button mat-raised-button (click)="updateObject()">Change Array Data</button>
+  <button mat-raised-button (click)="updateInitObject()">Change Init Array Data</button>
+  <hr>
+  <div class="matPreviewCard">
+    <h1 style="font-weight: bold; color: darkgreen;">Mat Preview Media</h1>
+    <h3>Image over width</h3>
+    <div class="img-card">
+      <img src="https://i.ibb.co/jr0KSwq/242499627-1014220756080167-6623136518582899302-n.jpg" (click)="preview('https://i.ibb.co/jr0KSwq/242499627-1014220756080167-6623136518582899302-n.jpg')">
+    </div>
+    <hr>
+    <h3>Image over height</h3>
+    <div class="img-card">
+      <img src="https://i.ibb.co/MGR5TMY/build-pc.jpg" (click)="preview('https://i.ibb.co/MGR5TMY/build-pc.jpg')">
+    </div>
+  </div>
+  <hr>
 </div>

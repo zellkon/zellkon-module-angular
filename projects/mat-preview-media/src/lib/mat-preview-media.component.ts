@@ -6,23 +6,29 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   selector: 'mat-preview-media',
   template: `
    <div fxLayout= "column" fxLayoutAlign="space-between center">
-    <img *ngIf="!isVideo() && !isPDF() && !isDOCX()" [src]="path">
+    <div style="width: 1300px; height: 600px;">
+      <img *ngIf="!isVideo() && !isPDF() && !isDOCX()" [src]="path">
+    </div>
     <video controls [autoplay]="false" [muted]="true" onloadedmetadata="this.muted = true" loop  *ngIf="isVideo()">
         <source [src]="path"  type='video/mp4'>
     </video>
     
-    <!-- <div class="center">
+    <div class="center">
         <iframe *ngIf="isPDF()" [src]="makeTrustURL(path)"></iframe>
         <iframe *ngIf="isDOCX()" [src]="makeTrustURL(convertGoogleViewDoc(path))" frameborder="0"></iframe>
-    </div>  -->
+    </div> 
 </div>
   `,
   styles: [
     `
     img {
-    max-width: 100%;
-    max-height: 100%;
+      width: 100%;
+      height: 100%;
+      object-fit: scale-down;
 }
+    .mat-dialog-container {
+      background-color: #3a3d3e !important;
+    }
     `
   ]
 })

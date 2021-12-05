@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, of, ReplaySubject, Subject } from 'rxjs';
+import {MatPreviewMediaService} from '../../projects/mat-preview-media/src/public-api'
 
 @Component({
   selector: 'app-root',
@@ -20,7 +21,8 @@ export class AppComponent implements OnInit {
   disabled = false;
   selectFormGroup!: FormGroup;
   constructor(
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private previewService: MatPreviewMediaService,
   ){
 
   }
@@ -115,5 +117,8 @@ export class AppComponent implements OnInit {
       return 'Must select';
     }
     return '';
+  }
+  preview(url: string): void {
+    this.previewService.openPreviewMedia(url);
   }
 }

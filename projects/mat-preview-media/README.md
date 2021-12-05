@@ -12,7 +12,7 @@ _This project made by  **[ZELLKON](https://zellkon.com)**._
 # [Github](https://github.com/zellkon/zellkon-module-angular)
 
 <p align="center">
-<img src="https://media.giphy.com/media/OgaVPvsW91Z2nR1lTX/giphy.gif">
+Demo
 </p>
 
 ## [NPM Package](https://www.npmjs.com/package/mat-preview-media)

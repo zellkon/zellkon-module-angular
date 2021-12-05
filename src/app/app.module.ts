@@ -11,6 +11,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatInputModule} from '@angular/material/input';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import {MatSelectSearchAdvancedModule} from '../../projects/mat-select-search-advanced/src/public-api'
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MatTooltipModule,
     MatInputModule,
     FlexLayoutModule,
+    MatSelectSearchAdvancedModule
   ],
   providers: [],
   bootstrap: [AppComponent]

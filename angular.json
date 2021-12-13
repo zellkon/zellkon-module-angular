@@ -1,5 +1,8 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": false
+  },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
@@ -195,6 +198,37 @@
             "main": "projects/mat-progress-bar/src/test.ts",
             "tsConfig": "projects/mat-progress-bar/tsconfig.spec.json",
             "karmaConfig": "projects/mat-progress-bar/karma.conf.js"
+          }
+        }
+      }
+    },
+    "mat-time-picker": {
+      "projectType": "library",
+      "root": "projects/mat-time-picker",
+      "sourceRoot": "projects/mat-time-picker/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/mat-time-picker/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/mat-time-picker/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/mat-time-picker/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/mat-time-picker/src/test.ts",
+            "tsConfig": "projects/mat-time-picker/tsconfig.spec.json",
+            "karmaConfig": "projects/mat-time-picker/karma.conf.js"
           }
         }
       }

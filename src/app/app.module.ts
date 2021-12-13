@@ -12,6 +12,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatInputModule} from '@angular/material/input';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import {MatSelectSearchAdvancedModule} from '../../projects/mat-select-search-advanced/src/public-api'
+import {MatTimePickerModule} from '../../projects/mat-time-picker/src/public-api'
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import {MatSelectSearchAdvancedModule} from '../../projects/mat-select-search-ad
     MatTooltipModule,
     MatInputModule,
     FlexLayoutModule,
-    MatSelectSearchAdvancedModule
+    MatSelectSearchAdvancedModule,
+    MatTimePickerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

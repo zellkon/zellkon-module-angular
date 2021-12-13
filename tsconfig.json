@@ -21,6 +21,10 @@
       "mat-select-search-advanced": [
         "dist/mat-select-search-advanced/mat-select-search-advanced",
         "dist/mat-select-search-advanced"
+      ],
+      "mat-time-picker": [
+        "dist/mat-time-picker/mat-time-picker",
+        "dist/mat-time-picker"
       ]
     },
     "declaration": false,

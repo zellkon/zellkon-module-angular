@@ -14,6 +14,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import {MatSelectSearchAdvancedModule} from '../../projects/mat-select-search-advanced/src/public-api'
 import {MatButtonModule} from '@angular/material/button';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatTimePickerModule} from '../../projects/mat-time-picker/src/public-api'
 @NgModule({
   declarations: [
     AppComponent
@@ -33,7 +34,8 @@ import {MatDialogModule} from '@angular/material/dialog';
     MatInputModule,
     MatButtonModule,
     FlexLayoutModule,
-    MatSelectSearchAdvancedModule
+    MatSelectSearchAdvancedModule,
+    MatTimePickerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

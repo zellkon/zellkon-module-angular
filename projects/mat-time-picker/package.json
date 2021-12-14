@@ -1,9 +1,9 @@
 {
-  "name": "mat-time-picker",
-  "version": "0.0.1",
+  "name": "@zellkon/mat-time-picker",
+  "version": "0.0.7",
   "peerDependencies": {
-    "@angular/common": "^13.0.0",
-    "@angular/core": "^13.0.0"
+    "@angular/common": "^12.2.13",
+    "@angular/core": "^12.2.13"
   },
   "dependencies": {
     "tslib": "^2.3.0"

@@ -30,11 +30,15 @@ export class AppComponent implements OnInit {
     this.selectFormGroup = this.fb.group({
       selectCtrlMultiple: [{value:  '', disabled: false}, [Validators.required]],
       selectCtrlSingle: [{value: '', disabled: false}, [Validators.required]],
+      timePicker: []
     });
     this.selectFormGroup.controls.selectCtrlSingle.valueChanges.subscribe(data => {
       console.log(data);
     });
     this.selectFormGroup.controls.selectCtrlMultiple.valueChanges.subscribe(data => {
+      console.log(data);
+    });
+    this.selectFormGroup.controls.timePicker.valueChanges.subscribe(data => {
       console.log(data);
     });
   }

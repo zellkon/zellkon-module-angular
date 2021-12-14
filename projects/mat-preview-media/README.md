@@ -1,24 +1,57 @@
-# MatPreviewMedia
+<h1 align="center">MAT PREVIEW MEDIA</h1>
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.0.
+<p align="center">
 
-## Code scaffolding
+<img src="https://img.shields.io/badge/create%20by-zellkon-brightgreen" >
+</p>
 
-Run `ng generate component component-name --project mat-preview-media` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project mat-preview-media`.
-> Note: Don't forget to add `--project mat-preview-media` or else it will be added to the default project in your `angular.json` file. 
+_This project made by  **[ZELLKON](https://zellkon.com)**._
 
-## Build
+---
 
-Run `ng build mat-preview-media` to build the project. The build artifacts will be stored in the `dist/` directory.
+# [Github](https://github.com/zellkon/zellkon-module-angular)
 
-## Publishing
+<p align="center">
+Demo
+</p>
 
-After building your library with `ng build mat-preview-media`, go to the dist folder `cd dist/mat-preview-media` and run `npm publish`.
+## [NPM Package](https://www.npmjs.com/package/mat-preview-media)
 
-## Running unit tests
 
-Run `ng test mat-preview-media` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-## Further help
+# Installation
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+`npm i mat-preview-media`
+
+# How to use
+
+## Implement
+### Import MatPreviewMediaModule into your module
+```
+import { MatPreviewMediaService } from 'mat-preview-media';
+```
+### Add Module
+```
+@NgModule({
+  imports: [
+    ...
+    MatPreviewMediaModule
+  ],
+  declarations: [	
+    AppComponent,
+   ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+### Use library in your component
+```html
+<img src="url" (click)= "preview(url)" >
+```
+```js
+private previewService: MatPreviewMediaService
+preview(url): void {
+    this.previewService.openPreviewMedia(url);
+}
+```

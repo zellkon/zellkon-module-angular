@@ -24,7 +24,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     FlexLayoutModule
   ],
   exports: [
-    MatTimePickerComponent
+    MatTimePickerComponent,
   ]
 })
 export class MatTimePickerModule { }

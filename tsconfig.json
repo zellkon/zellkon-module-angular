@@ -25,6 +25,10 @@
       "mat-time-picker": [
         "dist/mat-time-picker/mat-time-picker",
         "dist/mat-time-picker"
+      ],
+      "mat-upload": [
+        "dist/mat-upload/mat-upload",
+        "dist/mat-upload"
       ]
     },
     "declaration": false,

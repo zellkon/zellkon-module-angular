@@ -63,13 +63,35 @@
   </div>
   <hr>
   <div>
-    <mat-upload [uploadList]="false" label="Tải lên"></mat-upload>
+    <mat-upload 
+    serverUrl="http://apicrm.lavida.stg.rnt.vn/file/uploadfileform" 
+    location="test" 
+    accessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjIxNiIsIm5iZiI6MTY0MDc3MDQyOSwiZXhwIjoxNjQzMzYyNDI5LCJpYXQiOjE2NDA3NzA0Mjl9.JfHLleOPIIkLR5Ok3_4a1loYaLLesIdtr2xApNWZ7oE" 
+    typeUpload="single" 
+    label="Tải lên"
+    keyUrl="r"
+    formControlName="file"></mat-upload>
   </div>
   <div>
-    <mat-upload [uploadList]="true" label="Tải lên"></mat-upload>
+    <mat-upload 
+    typeUpload="multiple"
+    serverUrl="http://apicrm.lavida.stg.rnt.vn/file/uploadfileform" 
+    location="test" 
+    accessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjIxNiIsIm5iZiI6MTY0MDc3MDQyOSwiZXhwIjoxNjQzMzYyNDI5LCJpYXQiOjE2NDA3NzA0Mjl9.JfHLleOPIIkLR5Ok3_4a1loYaLLesIdtr2xApNWZ7oE" 
+    label="Tải lên"
+    keyUrl="r"
+    formControlName="file"></mat-upload>
   </div>
   <div>
-    <mat-upload [dragAndDrop]="true" label="Nhấp hoặc kéo tệp tin vào khu vực này để tải lên" description="Hỗ trợ file có phần mở rộng .xls, .xlsx"></mat-upload>
+    <mat-upload 
+    typeUpload="dragNdrop"
+    label="Nhấp hoặc kéo tệp tin vào khu vực này để tải lên"
+    description="Hỗ trợ file có phần mở rộng .xls, .xlsx"
+    serverUrl="http://apicrm.lavida.stg.rnt.vn/file/uploadfileform" 
+    location="test" 
+    accessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjIxNiIsIm5iZiI6MTY0MDc3MDQyOSwiZXhwIjoxNjQzMzYyNDI5LCJpYXQiOjE2NDA3NzA0Mjl9.JfHLleOPIIkLR5Ok3_4a1loYaLLesIdtr2xApNWZ7oE"
+    keyUrl="r"
+    formControlName="file"></mat-upload>
   </div>
    <!-- Avatar -->
 

@@ -6,7 +6,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   selector: 'mat-preview-media',
   template: `
    <div fxLayout= "column" fxLayoutAlign="space-between center">
-    <div style="width: 1300px; height: 600px;">
+    <div style="width: 600px; height: 600px;">
       <img *ngIf="!isVideo() && !isPDF() && !isDOCX()" [src]="path">
     </div>
     <video controls [autoplay]="false" [muted]="true" onloadedmetadata="this.muted = true" loop  *ngIf="isVideo()">

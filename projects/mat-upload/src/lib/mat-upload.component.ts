@@ -1,64 +1,66 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
+import { Component, forwardRef, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { MatPreviewMediaService } from 'mat-preview-media';
 import { MatUploadService } from './mat-upload.service';
-
 @Component({
   selector: 'mat-upload',
   template: `
-        <div *ngIf="!uploadList && !dragAndDrop" class="card border-card">
-              <div *ngIf="!fileUrl" class="center cursor-pointer" fxLayout="column" fxLayoutAlign="center center" (click)="file.click()">
+        <div *ngIf="typeUpload==='single'" class="card border-card">
+              <div *ngIf="!fileUrls[0]" class="center cursor-pointer" fxLayout="column" fxLayoutAlign="center center" (click)="file.click()">
                   <mat-icon>add</mat-icon>
                   <a class="label">{{label}}</a>
-                  <input type="file" name="file" id="file" (change)="onChangeFile($any($event).target.files[0])" #file>
+                  <input type="file" name="file" id="file" (change)="onChangeFile($any($event).target.files[0])" #file [disabled]="isDisabled">
               </div>
-              <div *ngIf="fileUrl" class="center cursor-pointer" fxLayout="column" fxLayoutAlign="center center">
+              <div *ngIf="fileUrls[0]" class="center cursor-pointer" fxLayout="column" fxLayoutAlign="center center">
                   <a
                   class="btnDelete"
-                  (click)="deleteOneFile()"                                         
+                  (click)="deleteFile(0)"                                         
                    fxLayout="column" fxLayoutAlign="center center">
                   <mat-icon class="deleteIcon">highlight_off</mat-icon>
                   </a>
-                  <img class ="centerImg" src="assets/img/test.png">
+                  <img class ="centerImg" [src]="fileUrls[0]" (click)="preview(fileUrls[0])">
                   <input type="file" name="file" id="file" (change)="onChangeFile($any($event).target.files[0])" #file>
               </div>            
         </div>
         <!-- Upload with drag and drop -->
-        <div *ngIf="dragAndDrop" fxLayout="column" fxLayoutAlign="start start">
+        <div *ngIf="typeUpload==='dragNdrop'" fxLayout="column" fxLayoutAlign="start start">
           <div fileDragDrop class="card w-full dragAndDrop" (filesChangeEmiter)="onChangeFiles($event)">
                 <div class="center cursor-pointer" fxLayout="column" fxLayoutAlign="center center" (click)="files.click()">
                   <div>
                     <mat-icon>drive_folder_upload</mat-icon>
-                    <input type="file" name="file" id="file" (change)="onChangeFiles($any($event).target.files)" multiple #files>
+                    <input type="file" name="file" id="file" (change)="onChangeFiles($any($event).target.files)" multiple #files [disabled]="isDisabled">
                   </div>
                   <a class="label">{{label}}</a>
                   <a class="description">{{description}}</a>
                 </div>             
           </div>
-          <div *ngIf="listFileUrl.length > 0" class="fileDrop w-full">
-              <div *ngFor="let file of listFileUrl; let i = index">
+          <div *ngIf="fileUrls.length > 0" class="fileDrop w-full">
+              <div *ngFor="let file of fileUrls; let i = index">
                   <div class="item" fxlayout="row" fxLayoutAlign="space-between center">
                     <div class="left" fxlayout="row" fxLayoutAlign="space-around center">
                       <mat-icon>attachment</mat-icon>
                       <a>{{file}}</a>
                     </div>
-                    <mat-icon (click)="deleteFileInList(i)">delete_outline</mat-icon>
+                    <mat-icon (click)="deleteFile(i)">delete_outline</mat-icon>
                   </div>
               </div>
           </div>
         </div>
 
         <!-- Upload with multiple -->
-        <div *ngIf="uploadList" class="w-full" fxLayout="row warp" fxLayoutGap="5px">
-          <ng-container *ngFor="let item of listFileUrl; let i = index">
+        <div *ngIf="typeUpload==='multiple'" class="w-full" fxLayout="row warp" fxLayoutGap="5px">
+          <ng-container *ngFor="let item of fileUrls; let i = index">
           <div class="card border-card">
               <a
                   class="btnDelete"
-                  (click)="deleteFileInList(i)"                                         
+                  (click)="deleteFile(i)"                                         
                    fxLayout="column" fxLayoutAlign="center center">
                   <mat-icon class="deleteIcon">highlight_off</mat-icon>
               </a>
               <div class="center cursor-pointer" 
                                         fxLayout="column" fxLayoutAlign="center center">
-                  <img class ="centerImg" src="assets/img/test.png">
+                  <img class ="centerImg" [src]="item" (click)="preview(item)">
               </div>                
           </div>
           </ng-container>
@@ -66,7 +68,7 @@ import { MatUploadService } from './mat-upload.service';
               <div class="center cursor-pointer" fxLayout="column" fxLayoutAlign="center center" (click)="file.click()">
                   <mat-icon>add</mat-icon>
                   <a class="label">{{label}}</a>
-                  <input type="file" name="file" id="file" (change)="onChangeFile($any($event).target.files[0])" #file>
+                  <input type="file" name="file" id="file" (change)="onChangeFile($any($event).target.files[0])" #file [disabled]="isDisabled">
               </div>           
           </div>                                                                      
         </div>
@@ -84,6 +86,7 @@ import { MatUploadService } from './mat-upload.service';
     --tw-bg-opacity: 1 !important;
     background-color: #F8F9F9 !important;
   }
+ 
   .fileDrop{
     margin: 0.5rem;
   }
@@ -122,7 +125,7 @@ import { MatUploadService } from './mat-upload.service';
   .btnDelete:hover{
     /* border: solid 0.1px white; */
     border-radius: 15px;
-    background-color: rgba(248, 249, 249, 0.7);
+    background-color: rgba(93, 109, 126, 0.3);
   }
  .deleteIcon {
     width: 1rem/* 20px */ !important;
@@ -148,7 +151,7 @@ import { MatUploadService } from './mat-upload.service';
     cursor: pointer !important;
   }
   .centerImg {
-    padding: 0.0rem/* 16px */ !important;
+    max-height: 8rem;
   }
   .dragAndDrop:hover {
     background-color: #E5E7E9 !important;
@@ -172,52 +175,125 @@ import { MatUploadService } from './mat-upload.service';
   display:none;
   }
   
-  `]
+  `],
+   providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => MatUploadComponent),
+      multi: true
+    }
+  ]
 })
 
-export class MatUploadComponent<TObject extends object> implements OnInit {
+export class MatUploadComponent<TObject extends object> implements OnInit, ControlValueAccessor {
   
   @Input() label = 'Upload';
   @Input() description = '';
   @Input() serverUrl = '';
-  @Input() uploadList = false;
+  @Input() typeUpload = 'single' || 'multiple' || 'dragNdrop';
   @Input() accessToken = '';
   @Input() location = '';
+  progress = 0;
   responseObject!: TObject;
   @Input()
   keyUrl!: keyof TObject;
-  fileUrl = '';
-  listFileUrl: any [] = ['1', '2'];
-  @Input() dragAndDrop = false;
-  dragMouse = false;
+  fileUrls: any[] = [];
+  result: any;
+  isDisabled = false;
+  onChange!: (fileUrls: any) => void;
+  onTouched!: () => void;
+  
   constructor(
-    private uploadService: MatUploadService
+    private uploadService: MatUploadService,
+    private previewService: MatPreviewMediaService,
   ) { }
 
+  writeValue(obj: any): void {
+    this.result = obj;
+    console.log(this.fileUrls);
+    
+  }
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+  setDisabledState(isDisabled: boolean) {
+    this.isDisabled = isDisabled;
+  }
   ngOnInit(): void {
   }
-  deleteFileInList(index: number): void {
-    this.listFileUrl.splice(index,1);
-  }
-  deleteOneFile(): void {
-    this.fileUrl = '';
+  deleteFile(index: number): void {
+    this.fileUrls.splice(index,1);
+    this.writeValue(this.fileUrls);
+    this.onChange(this.fileUrls);
   }
   onChangeFile(file: File): void {
-    if (!this.uploadList) {
-      this.fileUrl = file.name;
-      this.uploadService.uploadFile('http://apicrm.lavida.stg.rnt.vn/file/uploadfileform', 
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjIxNiIsIm5iZiI6MTY0MDc3MDQyOSwiZXhwIjoxNjQzMzYyNDI5LCJpYXQiOjE2NDA3NzA0Mjl9.JfHLleOPIIkLR5Ok3_4a1loYaLLesIdtr2xApNWZ7oE', '', file).subscribe(value => {
-        console.log(value);
+    this.uploadService.uploadFile(this.serverUrl, 
+      this.accessToken, this.location, file)
+      .subscribe((event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.Sent:
+            console.log('Request has been made!');
+            break;
+          case HttpEventType.ResponseHeader:
+            console.log('Response header has been received!');
+            break;
+          case HttpEventType.UploadProgress:
+            this.progress = Math.round(event.loaded / event.total! * 100);
+            console.log(`Uploaded! ${this.progress}%`);
+
+            break;
+          case HttpEventType.Response:
+            console.log('Upload successfully!', event.body);
+              this.responseObject = event.body;
+              this.fileUrls.push(this.responseObject[this.keyUrl]);
+              this.writeValue(this.fileUrls);
+              this.onChange(this.fileUrls);
+            setTimeout(() => {
+              this.progress = 0;
+            }, 1500);
+
+        }
       });
-    } else {
-      this.listFileUrl.push(file.name);
-    }
     
   }
   onChangeFiles(files: File[]): void {
-    for(let file of files) {
-      this.listFileUrl.push(file.name);
-    }
+    // for(let file of files) {
+    //   this.fileUrls.push(file.name);
+    // }
+    this.uploadService.uploadFiles(this.serverUrl, 
+      this.accessToken, this.location, files)
+      .subscribe((event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.Sent:
+            console.log('Request has been made!');
+            break;
+          case HttpEventType.ResponseHeader:
+            console.log('Response header has been received!');
+            break;
+          case HttpEventType.UploadProgress:
+            this.progress = Math.round(event.loaded / event.total! * 100);
+            console.log(`Uploaded! ${this.progress}%`);
+
+            break;
+          case HttpEventType.Response:
+            console.log('Upload successfully!', event.body);
+              this.responseObject = event.body;
+              console.log(this.responseObject);
+              // this.fileUrls.push(this.responseObject[this.keyUrl]);
+              // this.writeValue(this.fileUrls);
+              // this.onChange(this.fileUrls);
+            setTimeout(() => {
+              this.progress = 0;
+            }, 1500);
+
+        }
+      });
+  }
+  preview(url: string): void {
+    this.previewService.openPreviewMedia(url);
   }
 
 }

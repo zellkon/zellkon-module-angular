@@ -7,19 +7,19 @@ import {MatButtonModule} from '@angular/material/button';
 import {FileDragAndDropDirective} from './fileDragAndDrop.directive';
 import { HttpClientModule } from '@angular/common/http';
 import {MatPreviewMediaModule} from 'mat-preview-media';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 @NgModule({
   declarations: [
     MatUploadComponent,
     FileDragAndDropDirective,
-    
-    
   ],
   imports: [
     FlexLayoutModule,
     MatIconModule,
     MatButtonModule,
     CommonModule,
-    MatPreviewMediaModule
+    MatPreviewMediaModule,
+    MatSnackBarModule
   ],
   exports: [
     MatUploadComponent,

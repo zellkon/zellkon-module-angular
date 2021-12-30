@@ -15,7 +15,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
     
     <div class="center">
         <iframe *ngIf="isPDF()" [src]="makeTrustURL(path)"></iframe>
-        <iframe *ngIf="isDOCX()" [src]="makeTrustURL(convertGoogleViewDoc(path))" frameborder="0"></iframe>
+        <iframe *ngIf="isDOCX()" [src]="makeTrustURL(convertViewDoc(path))" frameborder="0"></iframe>
     </div> 
 </div>
   `,
@@ -59,7 +59,7 @@ export class MatPreviewMediaComponent implements OnInit {
   }
   // tslint:disable-next-line:typedef
   isDOCX(){
-    if (this.path?.includes('.docx')){
+    if (this.path?.includes('.docx') || this.path?.includes('.xls') || this.path?.includes('.xlsx')){
       return true;
     }
     return false;
@@ -70,7 +70,7 @@ export class MatPreviewMediaComponent implements OnInit {
     return this.safeUrl;
   }
   // tslint:disable-next-line:typedef
-  convertGoogleViewDoc(docUrl: string){
+  convertViewDoc(docUrl: string){
     return `https://view.officeapps.live.com/op/view.aspx?src=${docUrl}`;
   } 
 }

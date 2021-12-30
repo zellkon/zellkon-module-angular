@@ -1,7 +1,9 @@
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, forwardRef, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPreviewMediaService } from 'mat-preview-media';
+import { Icon } from './icon';
 import { MatUploadService } from './mat-upload.service';
 @Component({
   selector: 'mat-upload',
@@ -10,7 +12,7 @@ import { MatUploadService } from './mat-upload.service';
               <div *ngIf="!fileUrls[0]" class="center cursor-pointer" fxLayout="column" fxLayoutAlign="center center" (click)="file.click()">
                   <mat-icon>add</mat-icon>
                   <a class="label">{{label}}</a>
-                  <input type="file" name="file" id="file" (change)="onChangeFile($any($event).target.files[0])" #file [disabled]="isDisabled">
+                  <input type="file" name="file" id="file" (change)="onChangeFile($any($event).target.files[0])" [accept]="accept" #file [disabled]="isDisabled">
               </div>
               <div *ngIf="fileUrls[0]" class="center cursor-pointer" fxLayout="column" fxLayoutAlign="center center">
                   <a
@@ -19,8 +21,7 @@ import { MatUploadService } from './mat-upload.service';
                    fxLayout="column" fxLayoutAlign="center center">
                   <mat-icon class="deleteIcon">highlight_off</mat-icon>
                   </a>
-                  <img class ="centerImg" [src]="fileUrls[0]" (click)="preview(fileUrls[0])">
-                  <input type="file" name="file" id="file" (change)="onChangeFile($any($event).target.files[0])" #file>
+                  <img class ="centerImg" [src]="checkUrlType(fileUrls[0])" (click)="preview(serverUrl ? serverUrl + fileUrls[0]: fileUrls[0])">
               </div>            
         </div>
         <!-- Upload with drag and drop -->
@@ -29,18 +30,19 @@ import { MatUploadService } from './mat-upload.service';
                 <div class="center cursor-pointer" fxLayout="column" fxLayoutAlign="center center" (click)="files.click()">
                   <div>
                     <mat-icon>drive_folder_upload</mat-icon>
-                    <input type="file" name="file" id="file" (change)="onChangeFiles($any($event).target.files)" multiple #files [disabled]="isDisabled">
+                    <input type="file" name="file" id="file" (change)="onChangeFiles($any($event).target.files)" multiple [accept]="accept" #files [disabled]="isDisabled">
                   </div>
                   <a class="label">{{label}}</a>
                   <a class="description">{{description}}</a>
                 </div>             
           </div>
           <div *ngIf="fileUrls.length > 0" class="fileDrop w-full">
-              <div *ngFor="let file of fileUrls; let i = index">
+              <div *ngFor="let item of fileUrls; let i = index">
                   <div class="item" fxlayout="row" fxLayoutAlign="space-between center">
-                    <div class="left" fxlayout="row" fxLayoutAlign="space-around center">
+                    <div class="left" fxlayout="row" fxLayoutAlign="space-between center">
                       <mat-icon>attachment</mat-icon>
-                      <a>{{file}}</a>
+                       <img class ="dragImg" style="margin-left: 0.5rem;" [src]="checkUrlType(item)" (click)="preview(serverUrl ? serverUrl + item: item)">
+                      <a style="margin-left: 0.5rem;">{{item}}</a>
                     </div>
                     <mat-icon (click)="deleteFile(i)">delete_outline</mat-icon>
                   </div>
@@ -60,7 +62,7 @@ import { MatUploadService } from './mat-upload.service';
               </a>
               <div class="center cursor-pointer" 
                                         fxLayout="column" fxLayoutAlign="center center">
-                  <img class ="centerImg" [src]="item" (click)="preview(item)">
+                  <img class ="centerImg" [src]="checkUrlType(item)" (click)="preview(serverUrl ? serverUrl + item: item)">
               </div>                
           </div>
           </ng-container>
@@ -68,7 +70,7 @@ import { MatUploadService } from './mat-upload.service';
               <div class="center cursor-pointer" fxLayout="column" fxLayoutAlign="center center" (click)="file.click()">
                   <mat-icon>add</mat-icon>
                   <a class="label">{{label}}</a>
-                  <input type="file" name="file" id="file" (change)="onChangeFile($any($event).target.files[0])" #file [disabled]="isDisabled">
+                  <input type="file" name="file" id="file" (change)="onChangeFile($any($event).target.files[0])" [accept]="accept" #file [disabled]="isDisabled">
               </div>           
           </div>                                                                      
         </div>
@@ -174,7 +176,10 @@ import { MatUploadService } from './mat-upload.service';
   input[type="file"]{
   display:none;
   }
-  
+  .dragImg {
+    max-width: 1rem;
+    max-height: 1rem;
+  }
   `],
    providers: [
     {
@@ -190,22 +195,29 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
   @Input() label = 'Upload';
   @Input() description = '';
   @Input() serverUrl = '';
+  @Input() apiUrl = '';
   @Input() typeUpload = 'single' || 'multiple' || 'dragNdrop';
   @Input() accessToken = '';
   @Input() location = '';
-  progress = 0;
-  responseObject!: TObject;
+  @Input() accept = '*';
+  @Input() messageUploadError = 'Upload error, F12 for check';
+  @Input() messageExtensionError = 'Error extension';
+  @Input() snackBarClass = 'error-snackBar';
   @Input()
   keyUrl!: keyof TObject;
+  progress = 0;
+  responseObject!: any;
   fileUrls: any[] = [];
   result: any;
   isDisabled = false;
+
   onChange!: (fileUrls: any) => void;
   onTouched!: () => void;
   
   constructor(
     private uploadService: MatUploadService,
     private previewService: MatPreviewMediaService,
+    private snackBar: MatSnackBar
   ) { }
 
   writeValue(obj: any): void {
@@ -230,70 +242,130 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
     this.onChange(this.fileUrls);
   }
   onChangeFile(file: File): void {
-    this.uploadService.uploadFile(this.serverUrl, 
-      this.accessToken, this.location, file)
-      .subscribe((event: HttpEvent<any>) => {
-        switch (event.type) {
-          case HttpEventType.Sent:
-            console.log('Request has been made!');
-            break;
-          case HttpEventType.ResponseHeader:
-            console.log('Response header has been received!');
-            break;
-          case HttpEventType.UploadProgress:
-            this.progress = Math.round(event.loaded / event.total! * 100);
-            console.log(`Uploaded! ${this.progress}%`);
-
-            break;
-          case HttpEventType.Response:
-            console.log('Upload successfully!', event.body);
-              this.responseObject = event.body;
-              this.fileUrls.push(this.responseObject[this.keyUrl]);
-              this.writeValue(this.fileUrls);
-              this.onChange(this.fileUrls);
-            setTimeout(() => {
-              this.progress = 0;
-            }, 1500);
-
-        }
-      });
-    
+    if (this.checkErrorExtension(file)) {
+      this.snackBar.open(this.messageExtensionError, '' , {
+        duration: 5000,
+        horizontalPosition: 'right',
+        verticalPosition: 'bottom'
+      })
+    } else {
+      this.uploadService.uploadFile(this.apiUrl, 
+        this.accessToken, this.location, file)
+        .subscribe((event: HttpEvent<any>) => {
+          switch (event.type) {
+            case HttpEventType.Sent:
+              console.log('Request has been made!');
+              break;
+            case HttpEventType.ResponseHeader:
+              console.log('Response header has been received!');
+              break;
+            case HttpEventType.UploadProgress:
+              this.progress = Math.round(event.loaded / event.total! * 100);
+              console.log(`Uploaded! ${this.progress}%`);
+  
+              break;
+            case HttpEventType.Response:
+              console.log('Upload successfully!', event.body);
+                this.responseObject = event.body;
+                this.fileUrls.push(this.responseObject[this.keyUrl]);
+                this.writeValue(this.fileUrls);
+                this.onChange(this.fileUrls);
+              setTimeout(() => {
+                this.progress = 0;
+              }, 1500);
+  
+          }
+        }, (error) => {
+          this.snackBar.open(this.messageUploadError, '' , {
+            duration: 5000,
+            horizontalPosition: 'right',
+            verticalPosition: 'bottom'
+          })
+        });
+    }
   }
   onChangeFiles(files: File[]): void {
-    // for(let file of files) {
-    //   this.fileUrls.push(file.name);
-    // }
-    this.uploadService.uploadFiles(this.serverUrl, 
-      this.accessToken, this.location, files)
-      .subscribe((event: HttpEvent<any>) => {
-        switch (event.type) {
-          case HttpEventType.Sent:
-            console.log('Request has been made!');
-            break;
-          case HttpEventType.ResponseHeader:
-            console.log('Response header has been received!');
-            break;
-          case HttpEventType.UploadProgress:
-            this.progress = Math.round(event.loaded / event.total! * 100);
-            console.log(`Uploaded! ${this.progress}%`);
+      if (this.checkErrorExtension(files)) {
+        this.snackBar.open(this.messageExtensionError, '' , {
+          duration: 5000,
+          horizontalPosition: 'right',
+          verticalPosition: 'bottom',
+          panelClass: this.snackBarClass
+        })
+      } else {
+          this.uploadService.uploadFiles(this.apiUrl, 
+          this.accessToken, this.location, files)
+          .subscribe((event: HttpEvent<any>) => {
+            switch (event.type) {
+              case HttpEventType.Sent:
+                console.log('Request has been made!');
+                break;
+              case HttpEventType.ResponseHeader:
+                console.log('Response header has been received!');
+                break;
+              case HttpEventType.UploadProgress:
+                this.progress = Math.round(event.loaded / event.total! * 100);
+                console.log(`Uploaded! ${this.progress}%`);
 
-            break;
-          case HttpEventType.Response:
-            console.log('Upload successfully!', event.body);
-              this.responseObject = event.body;
-              console.log(this.responseObject);
-              // this.fileUrls.push(this.responseObject[this.keyUrl]);
-              // this.writeValue(this.fileUrls);
-              // this.onChange(this.fileUrls);
-            setTimeout(() => {
-              this.progress = 0;
-            }, 1500);
+                break;
+              case HttpEventType.Response:
+                console.log('Upload successfully!', event.body);
+                  this.responseObject = event.body;
+                  if (this.responseObject[this.keyUrl].length > 0) {
+                    for(let file of this.responseObject[this.keyUrl]) {
+                      this.fileUrls.push(file);
+                    }
+                    this.writeValue(this.fileUrls);
+                    this.onChange(this.fileUrls);
+                  } else {
+                    // other case
+                    this.writeValue(this.responseObject);
+                    this.onChange(this.responseObject);
+                  }
+                  
+                setTimeout(() => {
+                  this.progress = 0;
+                }, 1500);
 
-        }
-      });
+            }
+          }, (error) => {
+            this.snackBar.open(this.messageUploadError, '' , {
+              duration: 5000,
+              horizontalPosition: 'right',
+              verticalPosition: 'bottom'
+            })
+          }
+          );
+      }
   }
   preview(url: string): void {
     this.previewService.openPreviewMedia(url);
   }
-
+  checkUrlType(url: string): string {
+    if (url?.includes('.doc') || url?.includes('.docx')) {
+      return Icon.docIcon;
+    } else if (url?.includes('.pdf')) {
+      return Icon.pdfIcon;
+    } else if (url?.includes('.xls') || url?.includes('.xlsx')) {
+      return Icon.excelIcon;
+    }
+    return this.serverUrl ? this.serverUrl + url : url;
+  }
+  checkErrorExtension(file: any): boolean {
+  
+    if (file.length) {
+      let existErrorExt = false;
+      for (let item of file) {
+        if (this.accept.split(',').filter(x => item.type.includes(x)).length === 0) {
+          existErrorExt = true;
+        }
+      }
+      return existErrorExt;
+    } else {
+      if (this.accept.split(',').filter(x => file.type.includes(x)).length === 0 ) {
+        return true;
+      }
+      return false;
+    }
+  }
 }

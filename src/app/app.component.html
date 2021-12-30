@@ -64,18 +64,21 @@
   <hr>
   <div>
     <mat-upload 
-    serverUrl="http://apicrm.lavida.stg.rnt.vn/file/uploadfileform" 
+    apiUrl="http://apicrm.lavida.stg.rnt.vn/file/uploadfileform" 
+    serverUrl="http://apicrm.lavida.stg.rnt.vn/"  
     location="test" 
     accessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjIxNiIsIm5iZiI6MTY0MDc3MDQyOSwiZXhwIjoxNjQzMzYyNDI5LCJpYXQiOjE2NDA3NzA0Mjl9.JfHLleOPIIkLR5Ok3_4a1loYaLLesIdtr2xApNWZ7oE" 
     typeUpload="single" 
     label="Tải lên"
     keyUrl="r"
+    accept="image/png,image/jpg,image/jpeg"
     formControlName="file"></mat-upload>
   </div>
   <div>
     <mat-upload 
     typeUpload="multiple"
-    serverUrl="http://apicrm.lavida.stg.rnt.vn/file/uploadfileform" 
+    apiUrl="http://apicrm.lavida.stg.rnt.vn/file/uploadfileform" 
+    serverUrl="http://apicrm.lavida.stg.rnt.vn/"  
     location="test" 
     accessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjIxNiIsIm5iZiI6MTY0MDc3MDQyOSwiZXhwIjoxNjQzMzYyNDI5LCJpYXQiOjE2NDA3NzA0Mjl9.JfHLleOPIIkLR5Ok3_4a1loYaLLesIdtr2xApNWZ7oE" 
     label="Tải lên"
@@ -87,10 +90,11 @@
     typeUpload="dragNdrop"
     label="Nhấp hoặc kéo tệp tin vào khu vực này để tải lên"
     description="Hỗ trợ file có phần mở rộng .xls, .xlsx"
-    serverUrl="http://apicrm.lavida.stg.rnt.vn/file/uploadfileform" 
-    location="test" 
+    apiUrl="http://apicrm.lavida.stg.rnt.vn/File/uploadMultipleFile" 
+    serverUrl="http://apicrm.lavida.stg.rnt.vn/"  
     accessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjIxNiIsIm5iZiI6MTY0MDc3MDQyOSwiZXhwIjoxNjQzMzYyNDI5LCJpYXQiOjE2NDA3NzA0Mjl9.JfHLleOPIIkLR5Ok3_4a1loYaLLesIdtr2xApNWZ7oE"
     keyUrl="r"
+    accept="image/png,image/jpg,image/jpeg"
     formControlName="file"></mat-upload>
   </div>
    <!-- Avatar -->

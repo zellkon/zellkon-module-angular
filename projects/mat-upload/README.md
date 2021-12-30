@@ -1,24 +1,103 @@
-# MatUpload
+<h1 align="center">MAT UPLOAD</h1>
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.0.
+<p align="center">
 
-## Code scaffolding
+<img src="https://img.shields.io/badge/create%20by-zellkon-brightgreen" >
+</p>
 
-Run `ng generate component component-name --project mat-upload` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project mat-upload`.
-> Note: Don't forget to add `--project mat-upload` or else it will be added to the default project in your `angular.json` file. 
+_This project made by  **[ZELLKON](https://zellkon.com)**._
 
-## Build
+---
 
-Run `ng build mat-upload` to build the project. The build artifacts will be stored in the `dist/` directory.
+# [Github](https://github.com/zellkon/zellkon-module-angular)
 
-## Publishing
+<!-- <p align="center">
+<img src="https://media.giphy.com/media/OgaVPvsW91Z2nR1lTX/giphy.gif">
+</p> -->
 
-After building your library with `ng build mat-upload`, go to the dist folder `cd dist/mat-upload` and run `npm publish`.
+## [NPM Package](https://www.npmjs.com/package/mat-upload)
 
-## Running unit tests
 
-Run `ng test mat-upload` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-## Further help
+# Installation
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+`npm i mat-upload`
+## Implement
+### Import MatSelectSearchAdvancedModule into your module
+```
+import { MatUploadModule } from 'mat-upload';
+```
+### Add Module
+```
+@NgModule({
+  imports: [
+    ...
+    MatUploadModule
+  ],
+  declarations: [	
+    AppComponent,
+   ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+### Use library in your component
+```html
+  <div>
+    <mat-upload 
+    apiUrl="your api upload" 
+    serverUrl="your server image"  
+    location="test" 
+    accessToken="token" 
+    typeUpload="single" 
+    label="Tải lên"
+    keyUrl="r"
+    accept=".doc,.docx"
+    formControlName="file"></mat-upload>
+  </div>
+  <div>
+    <mat-upload 
+    typeUpload="multiple"
+    apiUrl="your api upload" 
+    serverUrl="your server image"  
+    location="test" 
+    accessToken="token" 
+    label="Tải lên"
+    keyUrl="r"
+    formControlName="file"></mat-upload>
+  </div>
+  <div>
+    <mat-upload 
+    typeUpload="dragNdrop"
+    label="Nhấp hoặc kéo tệp tin vào khu vực này để tải lên"
+    description="Hỗ trợ file có phần mở rộng .xls, .xlsx"
+    apiUrl="your api upload" 
+    serverUrl="your server image" 
+    location="test" 
+    accessToken="token"
+    keyUrl="r"
+    formControlName="file"></mat-upload>
+  </div>
+```
+
+Selector: `mat-upload`
+
+**Properties**
+
+| Name | Description |
+|------|-------------|
+| @Input() label: string | The label for upload card. |
+| @Input() description: string | Description for drag and drop. | 
+| @Input() serverUrl: string or undefined | Environment for case image Url return `Test/sample.png` this will returun serverUrl +  `Test/sample.png`. |
+| @Input() apiUrl: string | Environment api server for upload file. |
+| @Input() typeUpload: string |  `single` || `multiple` || `dragNdrop` |
+| @Input() accessToken: string or undefined | Your bearer token. |
+| @Input() location: string or undefined | Your location upload. |
+| @Input() accept: string | Read more  https://www.w3schools.com/tags/att_input_accept.asp . Example: `image/png,image/jpg` |
+| @Input() keyUrl: string | This's  key of response object. Example: `{error: 0, message: 'success'}` =>` keyUrl = "message"` => `formControl.value = 'success'`|
+| @Input() messageUploadError: string | This is error upload message. |
+| @Input() messageExtensionError: string | This is error extension message. |
+| @Input() snackBarClass: string | Defined class for SnackBar. Example: `snackBarClass="errorUpload"` and add `.errorUpload{background: red; color: white;}` into your `styles.scss` |
+
+

@@ -1,5 +1,5 @@
 import { HttpEvent, HttpEventType } from '@angular/common/http';
-import { Component, forwardRef, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, forwardRef, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPreviewMediaService } from 'mat-preview-media';
@@ -80,13 +80,15 @@ import { MatUploadService } from './mat-upload.service';
     position: relative !important;
     width: 10rem/* 160px */ !important;
     height: 10rem/* 160px */ !important;
-    margin: 0.5rem/* 8px */ !important;
+    min-width: 10rem/* 160px */ !important;
+    min-height: 10rem/* 160px */ !important;
     --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
     --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color) !important;
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
     border-radius: 0.5rem/* 16px */ !important;
     --tw-bg-opacity: 1 !important;
     background-color: #F8F9F9 !important;
+    margin: 0.5rem;
   }
  
   .fileDrop{
@@ -120,9 +122,9 @@ import { MatUploadService } from './mat-upload.service';
     z-index: 20 !important;
     top: 0.375rem !important;
     right: 0.375rem !important;
-    width: 1.5rem !important;
-    height: 1.5rem/* 32px */ !important;
-    min-height: 1.5rem/* 32px */ !important;
+    width: 2rem !important;
+    height: 2rem/* 32px */ !important;
+    min-height: 2rem/* 32px */ !important;
   }
   .btnDelete:hover{
     /* border: solid 0.1px white; */
@@ -130,12 +132,12 @@ import { MatUploadService } from './mat-upload.service';
     background-color: rgba(93, 109, 126, 0.3);
   }
  .deleteIcon {
-    width: 1rem/* 20px */ !important;
-    height: 1rem/* 20px */ !important;
-    min-width: 1rem/* 20px */ !important;
-    min-height: 1rem/* 20px */ !important;
-    font-size: 1rem/* 20px */ !important;
-    line-height: 1rem/* 20px */ !important;
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+    min-width: 1.5rem !important;
+    min-height: 1.5rem !important;
+    font-size: 1.5rem !important;
+    line-height: 1.5rem !important;
     color: rgb(231, 76, 60);
   }
   .center{
@@ -205,6 +207,7 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
   @Input() snackBarClass = 'error-snackBar';
   @Input()
   keyUrl!: keyof TObject;
+  @Output() delete$ = new EventEmitter<any>();;
   progress = 0;
   responseObject!: any;
   fileUrls: any[] = [];
@@ -221,9 +224,9 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
   ) { }
 
   writeValue(obj: any): void {
-    this.result = obj;
-    console.log(this.fileUrls);
-    
+    if (obj && obj.filter( (o: string) => o === '' || o === undefined || o === null).length === 0) {
+      this.fileUrls = obj;
+    } 
   }
   registerOnChange(fn: any): void {
     this.onChange = fn;
@@ -237,12 +240,13 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
   ngOnInit(): void {
   }
   deleteFile(index: number): void {
-    this.fileUrls.splice(index,1);
+    this.delete$.emit(this.fileUrls[index]);
+    this.fileUrls.splice(index, 1);
     this.writeValue(this.fileUrls);
     this.onChange(this.fileUrls);
   }
   onChangeFile(file: File): void {
-    if (this.checkErrorExtension(file)) {
+    if (this.checkErrorExtension(file) && this.accept !== '*') {
       this.snackBar.open(this.messageExtensionError, '' , {
         duration: 5000,
         horizontalPosition: 'right',
@@ -285,7 +289,7 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
     }
   }
   onChangeFiles(files: File[]): void {
-      if (this.checkErrorExtension(files)) {
+      if (this.checkErrorExtension(files) && this.accept !== '*') {
         this.snackBar.open(this.messageExtensionError, '' , {
           duration: 5000,
           horizontalPosition: 'right',

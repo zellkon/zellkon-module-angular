@@ -71,7 +71,6 @@
     typeUpload="single" 
     label="Tải lên"
     keyUrl="r"
-    accept="image/png,image/jpg,image/jpeg"
     formControlName="file"></mat-upload>
   </div>
   <div>
@@ -83,7 +82,8 @@
     accessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjIxNiIsIm5iZiI6MTY0MDc3MDQyOSwiZXhwIjoxNjQzMzYyNDI5LCJpYXQiOjE2NDA3NzA0Mjl9.JfHLleOPIIkLR5Ok3_4a1loYaLLesIdtr2xApNWZ7oE" 
     label="Tải lên"
     keyUrl="r"
-    formControlName="file"></mat-upload>
+    formControlName="file"
+    (delete$)="getDelete($event)"></mat-upload>
   </div>
   <div>
     <mat-upload 
@@ -94,7 +94,6 @@
     serverUrl="http://apicrm.lavida.stg.rnt.vn/"  
     accessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjIxNiIsIm5iZiI6MTY0MDc3MDQyOSwiZXhwIjoxNjQzMzYyNDI5LCJpYXQiOjE2NDA3NzA0Mjl9.JfHLleOPIIkLR5Ok3_4a1loYaLLesIdtr2xApNWZ7oE"
     keyUrl="r"
-    accept="image/png,image/jpg,image/jpeg"
     formControlName="file"></mat-upload>
   </div>
    <!-- Avatar -->

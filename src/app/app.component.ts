@@ -31,7 +31,7 @@ export class AppComponent implements OnInit {
       selectCtrlMultiple: [{value:  '', disabled: false}, [Validators.required]],
       selectCtrlSingle: [{value: '', disabled: false}, [Validators.required]],
       timePicker: [],
-      file:[]
+      file:[['test']]
     });
     this.selectFormGroup.controls.selectCtrlSingle.valueChanges.subscribe(data => {
       console.log(data);
@@ -128,5 +128,8 @@ export class AppComponent implements OnInit {
   }
   preview(url: string): void {
     this.previewService.openPreviewMedia(url);
+  }
+  getDelete(event: any) {
+    console.log(event);
   }
 }

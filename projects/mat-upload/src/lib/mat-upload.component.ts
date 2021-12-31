@@ -88,7 +88,8 @@ import { MatUploadService } from './mat-upload.service';
     border-radius: 0.5rem/* 16px */ !important;
     --tw-bg-opacity: 1 !important;
     background-color: #F8F9F9 !important;
-    margin: 0.5rem;
+    margin: 0.5rem !important;
+    user-select: none;
   }
  
   .fileDrop{
@@ -155,7 +156,8 @@ import { MatUploadService } from './mat-upload.service';
     cursor: pointer !important;
   }
   .centerImg {
-    max-height: 8rem;
+    max-height: 8rem !important;
+    max-width: 8rem !important;
   }
   .dragAndDrop:hover {
     background-color: #E5E7E9 !important;

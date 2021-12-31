@@ -28,10 +28,10 @@ export class AppComponent implements OnInit {
   }
   ngOnInit(): void {
     this.selectFormGroup = this.fb.group({
-      selectCtrlMultiple: [{value:  '', disabled: false}, [Validators.required]],
-      selectCtrlSingle: [{value: '', disabled: false}, [Validators.required]],
+      selectCtrlMultiple: [{value:  [1,2], disabled: true}, [Validators.required]],
+      selectCtrlSingle: [{value: 1, disabled: false}, [Validators.required]],
       timePicker: [],
-      file:[['test']]
+      file:[{value:['1'], disabled: false}]
     });
     this.selectFormGroup.controls.selectCtrlSingle.valueChanges.subscribe(data => {
       console.log(data);
@@ -45,6 +45,7 @@ export class AppComponent implements OnInit {
     this.selectFormGroup.controls.file.valueChanges.subscribe(data => {
       console.log(data);
     });
+    this.updateObject();
   }
  
   getListSelected(result: any){

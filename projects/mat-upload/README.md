@@ -96,10 +96,12 @@ Selector: `mat-upload`
 | @Input() accessToken: string or undefined | Your bearer token. |
 | @Input() location: string or undefined | Your location upload. |
 | @Input() accept: string | Read more  https://www.w3schools.com/tags/att_input_accept.asp . Example: `image/png,image/jpg` |
-| @Input() keyUrl: string | This's  key of response object. Example: `{error: 0, message: 'success'}` =>` keyUrl = "message"` => `formControl.value = ['success']`|
+| @Input() urlKey: string | This's  key of response object. Example: `{error: 0, message: 'success'}` =>` keyUrl = "message"` => `formControl.value = ['success']`|
 | @Input() messageUploadError: string | This is error upload message. |
 | @Input() messageExtensionError: string | This is error extension message. |
 | @Output() delete$: event | This is file url delete. |
 | @Input() snackBarClass: string | Defined class for SnackBar. Example: `snackBarClass="errorUpload"` and add `.errorUpload{background: red; color: white;}` into your `styles.scss` |
+| @Input() requestParam = 'file' | Defined param for request.|
+| @Input() errorKey = 'm' | Defined error message for response.|
 
 

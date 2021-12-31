@@ -10,19 +10,19 @@ export class MatUploadService {
   constructor(
     private http: HttpClient,
   ) { }
-  uploadFile(apiUrl: string, accessToken: string, location: string, file: File) {
+  uploadFile(apiUrl: string, accessToken: string, location: string, requestParam: string, file: File) {
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + accessToken);
     const formData = new FormData();
     if (location && location !=='') {
       formData.append('location', location);
     }
-    formData.append('', file);
+    formData.append(requestParam, file);
     if (accessToken && accessToken !=='') {
       return this.http.post(apiUrl, formData , {headers, reportProgress: true, observe: 'events' });
     }
     return this.http.post(apiUrl, formData, {reportProgress: true, observe: 'events' });
   }
-  uploadFiles(apiUrl: string, accessToken: string, location: string, files: File[]) {
+  uploadFiles(apiUrl: string, accessToken: string, location: string, requestParam: string, files: File[]) {
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + accessToken);
     const formData = new FormData();
     if (location && location !=='') {
@@ -30,7 +30,7 @@ export class MatUploadService {
     }
     if (files.length) {
       for (let file of files)
-        formData.append('files', file, file.name);
+        formData.append(requestParam, file, file.name);
     }
     if (accessToken && accessToken !=='') {
       return this.http.post(apiUrl, formData, { headers, reportProgress: true, observe: 'events' });

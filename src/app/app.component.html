@@ -70,7 +70,7 @@
     accessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjIxNiIsIm5iZiI6MTY0MDc3MDQyOSwiZXhwIjoxNjQzMzYyNDI5LCJpYXQiOjE2NDA3NzA0Mjl9.JfHLleOPIIkLR5Ok3_4a1loYaLLesIdtr2xApNWZ7oE" 
     typeUpload="single" 
     label="Tải lên"
-    keyUrl="r"
+    urlKey="r"
     formControlName="file"></mat-upload>
   </div>
   <div>
@@ -81,20 +81,22 @@
     location="test" 
     accessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjIxNiIsIm5iZiI6MTY0MDc3MDQyOSwiZXhwIjoxNjQzMzYyNDI5LCJpYXQiOjE2NDA3NzA0Mjl9.JfHLleOPIIkLR5Ok3_4a1loYaLLesIdtr2xApNWZ7oE" 
     label="Tải lên"
-    keyUrl="r"
+    urlKey="r"
     formControlName="file"
     (delete$)="getDelete($event)"></mat-upload>
   </div>
   <div>
     <mat-upload 
-    typeUpload="dragNdrop"
-    label="Nhấp hoặc kéo tệp tin vào khu vực này để tải lên"
-    description="Hỗ trợ file có phần mở rộng .xls, .xlsx"
-    apiUrl="http://apicrm.lavida.stg.rnt.vn/File/uploadMultipleFile" 
-    serverUrl="http://apicrm.lavida.stg.rnt.vn/"  
-    accessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjIxNiIsIm5iZiI6MTY0MDc3MDQyOSwiZXhwIjoxNjQzMzYyNDI5LCJpYXQiOjE2NDA3NzA0Mjl9.JfHLleOPIIkLR5Ok3_4a1loYaLLesIdtr2xApNWZ7oE"
-    keyUrl="r"
-    formControlName="file"></mat-upload>
+        typeUpload="dragNdrop"
+        label="Nhấp hoặc kéo tệp tin vào khu vực này để tải lên"
+        description="Hỗ trợ file có phần mở rộng .xls, .xlsx"
+        apiUrl="http://apicrm.lavida.stg.rnt.vn/Card/uploadFileExcel" 
+        serverUrl="http://apicrm.lavida.stg.rnt.vn/"  
+        urlKey="m"
+        accessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjIxNiIsIm5iZiI6MTY0MDc3MDQyOSwiZXhwIjoxNjQzMzYyNDI5LCJpYXQiOjE2NDA3NzA0Mjl9.JfHLleOPIIkLR5Ok3_4a1loYaLLesIdtr2xApNWZ7oE" 
+        formControlName="file"
+        requestParam="file"
+        errorKey="m"></mat-upload>
   </div>
    <!-- Avatar -->
 

@@ -11,7 +11,7 @@ import { take, takeUntil } from 'rxjs/operators';
   <div [formGroup]="fg">
 <mat-form-field [appearance]="appearance" style="width: 100%;" > 
       <mat-label>
-          {{label}}
+          {{label}}<span *ngIf="required" style="color: red;">*</span>
       </mat-label>
 <mat-select formControlName = "selectCtrl" [multiple]="multiple"  #multiSelect (opened)="onOpened()" (closed)="onClosed()">
        <!-- search -->

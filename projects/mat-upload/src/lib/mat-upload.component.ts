@@ -16,6 +16,7 @@ import { MatUploadService } from './mat-upload.service';
               </div>
               <div *ngIf="fileUrls[0]" class="center cursor-pointer" fxLayout="column" fxLayoutAlign="center center">
                   <a
+                  *ngIf="!isDisabled"
                   class="btnDelete"
                   (click)="deleteFile(0)"                                         
                    fxLayout="column" fxLayoutAlign="center center">
@@ -25,7 +26,7 @@ import { MatUploadService } from './mat-upload.service';
               </div>            
         </div>
         <!-- Upload with drag and drop -->
-        <div *ngIf="typeUpload==='dragNdrop'" fxLayout="column" fxLayoutAlign="start start">
+        <div *ngIf="typeUpload==='dragNdrop'">
           <div fileDragDrop class="card w-full dragAndDrop" (filesChangeEmiter)="onChangeFiles($event)">
                 <div class="center cursor-pointer" fxLayout="column" fxLayoutAlign="center center" (click)="files.click()">
                   <div>
@@ -44,7 +45,7 @@ import { MatUploadService } from './mat-upload.service';
                        <img class ="dragImg" style="margin-left: 0.5rem;" [src]="checkUrlType(item)" (click)="preview(serverUrl ? serverUrl + item: item)">
                       <a style="margin-left: 0.5rem;">{{item}}</a>
                     </div>
-                    <mat-icon (click)="deleteFile(i)">delete_outline</mat-icon>
+                    <mat-icon *ngIf="!isDisabled" (click)="deleteFile(i)">delete_outline</mat-icon>
                   </div>
               </div>
           </div>
@@ -53,8 +54,9 @@ import { MatUploadService } from './mat-upload.service';
         <!-- Upload with multiple -->
         <div *ngIf="typeUpload==='multiple'" class="w-full" fxLayout="row warp" fxLayoutGap="5px">
           <ng-container *ngFor="let item of fileUrls; let i = index">
-          <div class="card border-card">
+          <div class="card border-card" [ngClass]="{'mList': typeUpload ==='multiple'}">
               <a
+                  *ngIf="!isDisabled"
                   class="btnDelete"
                   (click)="deleteFile(i)"                                         
                    fxLayout="column" fxLayoutAlign="center center">
@@ -66,7 +68,7 @@ import { MatUploadService } from './mat-upload.service';
               </div>                
           </div>
           </ng-container>
-          <div class="card border-card">
+          <div class="card border-card" *ngIf="!isDisabled" [ngClass]="{'mList': typeUpload ==='multiple'}">
               <div class="center cursor-pointer" fxLayout="column" fxLayoutAlign="center center" (click)="file.click()">
                   <mat-icon>add</mat-icon>
                   <a class="label">{{label}}</a>
@@ -88,12 +90,13 @@ import { MatUploadService } from './mat-upload.service';
     border-radius: 0.5rem/* 16px */ !important;
     --tw-bg-opacity: 1 !important;
     background-color: #F8F9F9 !important;
-    margin: 0.5rem !important;
     user-select: none;
   }
- 
   .fileDrop{
-    margin: 0.5rem;
+    /* margin: 0.5rem; */
+  }
+  .mList {
+    margin: 0 0.5rem 0.5rem 0 !important;
   }
   .item{
     height: 2rem;
@@ -207,15 +210,18 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
   @Input() messageUploadError = 'Upload error, F12 for check';
   @Input() messageExtensionError = 'Error extension';
   @Input() snackBarClass = 'error-snackBar';
+  @Input() requestParam = 'file';
   @Input()
-  keyUrl!: keyof TObject;
+  urlKey!: keyof TObject;
+  @Input()
+  errorKey!: keyof TObject;
   @Output() delete$ = new EventEmitter<any>();;
   progress = 0;
   responseObject!: any;
   fileUrls: any[] = [];
   result: any;
   isDisabled = false;
-
+  unknown =Icon.unknown;
   onChange!: (fileUrls: any) => void;
   onTouched!: () => void;
   
@@ -256,7 +262,7 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
       })
     } else {
       this.uploadService.uploadFile(this.apiUrl, 
-        this.accessToken, this.location, file)
+        this.accessToken, this.location, this.requestParam, file)
         .subscribe((event: HttpEvent<any>) => {
           switch (event.type) {
             case HttpEventType.Sent:
@@ -273,7 +279,7 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
             case HttpEventType.Response:
               console.log('Upload successfully!', event.body);
                 this.responseObject = event.body;
-                this.fileUrls.push(this.responseObject[this.keyUrl]);
+                this.fileUrls.push(this.responseObject[this.urlKey]);
                 this.writeValue(this.fileUrls);
                 this.onChange(this.fileUrls);
               setTimeout(() => {
@@ -281,8 +287,8 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
               }, 1500);
   
           }
-        }, (error) => {
-          this.snackBar.open(this.messageUploadError, '' , {
+        }, (err) => {
+          this.snackBar.open(err.error[this.errorKey], '' , {
             duration: 5000,
             horizontalPosition: 'right',
             verticalPosition: 'bottom'
@@ -300,7 +306,7 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
         })
       } else {
           this.uploadService.uploadFiles(this.apiUrl, 
-          this.accessToken, this.location, files)
+          this.accessToken, this.location, this.requestParam, files)
           .subscribe((event: HttpEvent<any>) => {
             switch (event.type) {
               case HttpEventType.Sent:
@@ -317,16 +323,17 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
               case HttpEventType.Response:
                 console.log('Upload successfully!', event.body);
                   this.responseObject = event.body;
-                  if (this.responseObject[this.keyUrl].length > 0) {
-                    for(let file of this.responseObject[this.keyUrl]) {
+                  if (typeof this.responseObject[this.urlKey] === 'object') {
+                    for(let file of this.responseObject[this.urlKey]) {
                       this.fileUrls.push(file);
                     }
                     this.writeValue(this.fileUrls);
                     this.onChange(this.fileUrls);
                   } else {
                     // other case
-                    this.writeValue(this.responseObject);
-                    this.onChange(this.responseObject);
+                    this.fileUrls.push(this.responseObject[this.urlKey]);
+                    this.writeValue(this.fileUrls);
+                    this.onChange(this.fileUrls);
                   }
                   
                 setTimeout(() => {
@@ -334,8 +341,8 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
                 }, 1500);
 
             }
-          }, (error) => {
-            this.snackBar.open(this.messageUploadError, '' , {
+          }, (err) => {
+            this.snackBar.open(err.error[this.errorKey], '' , {
               duration: 5000,
               horizontalPosition: 'right',
               verticalPosition: 'bottom'
@@ -355,7 +362,7 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
     } else if (url?.includes('.xls') || url?.includes('.xlsx')) {
       return Icon.excelIcon;
     }
-    return this.serverUrl ? this.serverUrl + url : url;
+    return (this.serverUrl ? this.serverUrl + url : url);
   }
   checkErrorExtension(file: any): boolean {
   

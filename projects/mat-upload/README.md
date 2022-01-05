@@ -24,7 +24,7 @@ _This project made by  **[ZELLKON](https://zellkon.com)**._
 
 `npm i mat-upload`
 ## Implement
-### Import MatSelectSearchAdvancedModule into your module
+### Import
 ```
 import { MatUploadModule } from 'mat-upload';
 ```
@@ -92,7 +92,7 @@ Selector: `mat-upload`
 | @Input() description: string | Description for drag and drop. | 
 | @Input() serverUrl: string or undefined | Environment for case image Url return `Test/sample.png` this will returun serverUrl +  `Test/sample.png`. |
 | @Input() apiUrl: string | Environment api server for upload file. |
-| @Input() typeUpload: string |  `single` || `multiple` || `dragNdrop` |
+| @Input() typeUpload: string |  `single` | `multiple` | `dragNdrop` |
 | @Input() accessToken: string or undefined | Your bearer token. |
 | @Input() location: string or undefined | Your location upload. |
 | @Input() accept: string | Read more  https://www.w3schools.com/tags/att_input_accept.asp . Example: `image/png,image/jpg` |

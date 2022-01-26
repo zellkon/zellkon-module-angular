@@ -28,7 +28,7 @@ export class AppComponent implements OnInit {
   }
   ngOnInit(): void {
     this.selectFormGroup = this.fb.group({
-      selectCtrlMultiple: [{value:  [1,2], disabled: true}, [Validators.required]],
+      selectCtrlMultiple: [{value:  [1,2], disabled: false}, [Validators.required]],
       selectCtrlSingle: [{value: 1, disabled: false}, [Validators.required]],
       timePicker: [],
       file:[{value:['1'], disabled: false}]
@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
       console.log(data);
     });
     this.selectFormGroup.controls.selectCtrlMultiple.valueChanges.subscribe(data => {
-      console.log(data);
+      console.log('value selected' + data);
     });
     this.selectFormGroup.controls.timePicker.valueChanges.subscribe(data => {
       console.log(data);
@@ -52,7 +52,7 @@ export class AppComponent implements OnInit {
     // console.log(result);
   }
   optionSelected(data: any){
-    console.log(data);
+    // console.log(data);
   }
   updateObject(){
     this.objects = [
@@ -66,48 +66,6 @@ export class AppComponent implements OnInit {
         id: 2,
         name: 'Dog',
         age: 22,
-        job: 'Sleep',
-      },
-      {
-        id: 3,
-        name: 'Bird',
-        age: 23,
-        job: 'Sleep',
-      },
-      {
-        id: 4,
-        name: 'Fish',
-        age: 24,
-        job: 'Sleep',
-      },
-      {
-        id: 5,
-        name: 'Lion',
-        age: 25,
-        job: 'Sleep',
-      },
-      {
-        id: 6,
-        name: 'Lion',
-        age: 25,
-        job: 'Sleep',
-      },
-      {
-        id: 7,
-        name: 'Lion',
-        age: 25,
-        job: 'Sleep',
-      },
-      {
-        id: 8,
-        name: 'Lion',
-        age: 25,
-        job: 'Sleep',
-      },
-      {
-        id: 9,
-        name: 'Lion',
-        age: 25,
         job: 'Sleep',
       },
 

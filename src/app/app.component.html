@@ -11,18 +11,18 @@
       noEntriesFoundLabel="Found nothing" 
       tooltipMessage="Select all / Deselect all" 
       selectAllViewLabel="All animal"
-      [initData] = "initArray"
+      [initData] = "[1,2]"
       appearance = "outline"
       [multiple] = "true"
       [required] = "true"
-      [showToggleAllCheckbox] = "false"
+      [showToggleAllCheckbox] = "true"
       (optionSelected$)="optionSelected($event)"
       formControlName ="selectCtrlMultiple"
      >
   </mat-select-search-advanced>
   <h1 style="font-weight: bold; color: darkgreen;">Mat Select Search Advance - Single</h1>
 
-  <!-- <mat-select-search-advanced 
+  <mat-select-search-advanced 
       appearance = "fill"
       [objects]="objects" 
       indexKey="id" 
@@ -36,9 +36,9 @@
       selectAllViewLabel="All animal"
       [multiple]="false"
       [required] = "true"
-      [initData] = "init"
+      [initData] = "1"
       formControlName="selectCtrlSingle">
-  </mat-select-search-advanced> -->
+  </mat-select-search-advanced>
   <button mat-raised-button (click)="updateObject()">Change Array Data</button>
   <button mat-raised-button (click)="updateInitObject()">Change Init Array Data</button>
   <hr>

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, forwardRef, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, forwardRef, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ControlValueAccessor, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
 import { A, END, ESCAPE, HOME, NINE, SPACE, Z, ZERO, } from '@angular/cdk/keycodes';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
@@ -13,10 +13,10 @@ import { take, takeUntil } from 'rxjs/operators';
       <mat-label>
           {{label}}<span *ngIf="required" style="color: red;">*</span>
       </mat-label>
-<mat-select formControlName = "selectCtrl" [multiple]="multiple"  #multiSelect (opened)="onOpened()" (closed)="onClosed()">
+<mat-select formControlName = "selectCtrl" [multiple]="multiple"  #multiSelect  (opened)="onOpened()" (closed)="onClosed()">
        <!-- search -->
        <div class ="mat-search-container" fxLayout = "row" fxLayoutAlign="center center">
-           <mat-checkbox *ngIf="multiple ? showToggleAllCheckbox : false" style="margin-left: 16px;" [checked]="isCheckAll" (change)="toggleSelectAll($event)" [matTooltip]="tooltipMessage" [matTooltipPosition]="tooltipPosition" color="primary"></mat-checkbox>
+           <mat-checkbox *ngIf="(multiple ? showToggleAllCheckbox : false) && !fg?.controls?.inputSearchCtrl?.value" style="margin-left: 16px;" [checked]="isCheckAll" (change)="toggleSelectAll($event)" [matTooltip]="tooltipMessage" [matTooltipPosition]="tooltipPosition" color="primary"></mat-checkbox>
            <input 
            formControlName="inputSearchCtrl" 
            style="margin-left: 10px; margin-top: 2px;" 
@@ -30,7 +30,7 @@ import { take, takeUntil } from 'rxjs/operators';
         {{noEntriesFoundLabel}}
     </div>
 </div>
-  <mat-option *ngFor="let obj of filteredObjectsMulti | async;" [value]="obj[indexKey]" (change)="selectOption($event)">
+  <mat-option *ngFor="let obj of filteredObjectsMulti | async;" [value]="obj[indexKey]" #matOption (click)="selectOption(matOption)">
         <span *ngFor="let key of viewKey; let i = index;">
             {{obj[key]}}
             <span *ngIf="i >= 0 && i !== viewKey.length - 1"> - </span>
@@ -39,7 +39,8 @@ import { take, takeUntil } from 'rxjs/operators';
   </mat-option>
     <div *ngIf="!filteredObjectsMulti">{{noEntriesFoundLabel}}</div>
   <mat-select-trigger *ngIf="multiple === true">
-      {{ isCheckAll ? selectAllViewLabel : makePreviewTrigger(fg.controls.selectCtrl.value)}}
+      {{ isCheckAll  
+        ? selectAllViewLabel : makePreviewTrigger(fg.controls.selectCtrl.value)}}
   </mat-select-trigger>
   </mat-select>
   <mat-error>{{catchErrorMessage('selectCtrl')}}
@@ -102,7 +103,7 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
   // inputSearchCtrl: FormControl = new FormControl();
   /** list of objects filtered by search keyword */
   public filteredObjectsMulti: ReplaySubject<TObject[]> = new ReplaySubject<TObject[]>(1);
-  @ViewChild('multiSelect', { static: true })
+  @ViewChild('multiSelect')
   multiSelect!: MatSelect;
   @Output() optionSelected$ = new EventEmitter<any>();
   /** Subject that emits when the component has been destroyed. */
@@ -116,17 +117,19 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
 
   constructor(
     private fb: FormBuilder,
+    private cdref: ChangeDetectorRef
   ) { 
   }
 
   ngOnInit(): void {
     this.fg = this.fb.group({
-      selectCtrl: [this.initData ? this.initData : ''],
+      selectCtrl: [this.initData],
       inputSearchCtrl: [],
     });
     // console.log(this.objectSelected);
     this.initSelect();
     this.checkSelectCtrl();
+    this.compareSelectedAndInitial(this.fg.controls.selectCtrl.value, this.objects)
   }
   // custom form
   writeValue(obj: any): void {
@@ -150,8 +153,8 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('objects' in changes) {
-      const objects = changes['objects'].currentValue;
-      this.objects = objects;
+      const o = changes['objects'].currentValue;
+      this.objects = o;
       this.filteredObjectsMulti.next(this.objects.slice());
     }
     if ('initData' in changes){
@@ -172,6 +175,7 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
   // Select with search and select all ****************************************************************************
 
   ngAfterViewInit(): void {
+    this.cdref.detectChanges();
   }
 
   ngOnDestroy(): void {
@@ -185,9 +189,18 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
       .subscribe(val => {
         let listObjs = val.map(obj => obj[this.indexKey]);
         if (this.showToggleAllCheckbox && event.checked) {
-          this.fg.controls?.selectCtrl?.patchValue(listObjs);
+          if (this.fg?.controls?.inputSearchCtrl.value) {
+            this.fg.controls?.selectCtrl?.patchValue([...listObjs, ...this.objectSelected]);
+          } else {
+            this.fg.controls?.selectCtrl?.patchValue(listObjs);
+          } 
         } else {
-          this.fg.controls?.selectCtrl?.patchValue([]);
+          if (this.fg?.controls?.inputSearchCtrl.value) {
+
+          } else {
+             this.fg.controls?.selectCtrl?.patchValue([]);
+          }
+         
         }
       });
   }
@@ -217,11 +230,21 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
     this.fg?.controls?.selectCtrl?.patchValue([]);
   }
   checkSelectCtrl(): void {
-    this.fg?.controls?.selectCtrl?.valueChanges.subscribe(value => {
-      this.writeValue(value);
-      this.onChange(value);
-      this.onTouched();
-     
+    this.fg?.controls?.selectCtrl?.valueChanges.pipe(takeUntil(this._onDestroy))
+    .subscribe(value => { 
+      // console.log(this.objectSelected);
+      // console.log(value);
+      // console.log([...value, ...this.objectSelected]);
+    //  if (this.multiple && this.fg?.controls?.inputSearchCtrl.value) {
+    //   this.writeValue([...value, ...this.objectSelected]);
+    //   this.onChange([...value, ...this.objectSelected]);
+    //   this.onTouched(); 
+    //  } else {
+    //   this.writeValue(value);
+    //   this.onChange(value);
+    //   this.onTouched(); 
+    //  }
+
       if (this.fg.controls.inputSearchCtrl.value){
         this.filteredObjectsMulti.subscribe(filters => {
           // console.log(filters);
@@ -272,18 +295,31 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
   }
 
   selectOption(data: any) {
-    this.optionSelected$.emit({ value: data });
+    // this.optionSelected$.emit({ value: data });
+    // if (this.multiple) {
+    //   if (this.objectSelected.find((x: any) => x === data)) {
+    //     this.objectSelected.splice(this.objectSelected.findIndex((x: any) => x === data), 1);
+    //     this.fg?.controls?.selectCtrl.patchValue(this.objectSelected);
+    //   } else {
+    //     this.objectSelected.push(data);
+    //     this.fg?.controls?.selectCtrl.patchValue(this.objectSelected);
+    //   }
+    // }
+    // console.log(data);
+    console.log(data._selected);
   }
 
   initSelect(): void {
      // listen for search field value changes
      this.fg.controls?.inputSearchCtrl?.valueChanges
-     .pipe(takeUntil(this._onDestroy))
+    //  .pipe(takeUntil(this._onDestroy))
      .subscribe(value => {
        // console.log(value);
-       if (value) {
-         this.clearAllSelected();
-       }
+      //  if (value) {
+      //    this.clearAllSelected();
+      //  }
+      //  this.isCheckAll = false;
+       // this.compareSelectedAndInitial(this.objectSelected, this.objects);
        this.filterObjectsMulti();
      });
     // load the initial object list

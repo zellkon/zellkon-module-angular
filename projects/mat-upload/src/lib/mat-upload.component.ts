@@ -292,7 +292,7 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
           this.snackBar.open(err.error[this.errorKey], '' , {
             duration: 5000,
             horizontalPosition: 'right',
-            verticalPosition: 'bottom',
+            verticalPosition: 'top',
             panelClass: [this.snackBarClass]
           })
         });
@@ -303,7 +303,7 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
         this.snackBar.open(this.messageExtensionError, '' , {
           duration: 5000,
           horizontalPosition: 'right',
-          verticalPosition: 'bottom',
+          verticalPosition: 'top',
           panelClass: [this.snackBarClass]
         })
       } else {
@@ -347,7 +347,7 @@ export class MatUploadComponent<TObject extends object> implements OnInit, Contr
             this.snackBar.open(err.error[this.errorKey], '' , {
               duration: 5000,
               horizontalPosition: 'right',
-              verticalPosition: 'bottom',
+              verticalPosition: 'top',
               panelClass: [this.snackBarClass]
             })
           }

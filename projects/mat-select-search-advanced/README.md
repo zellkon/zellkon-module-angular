@@ -51,7 +51,6 @@ export class AppModule { }
         [objects]="array" indexKey="id" 
         [viewKey]="['name']" 
         [searchProperties]="['name', 'age']"
-        [initData] = "initArray"
         placeholderSearchLabel="Search by name" 
         label="List Animal" 
         messageErrorRequired="You need select some thing"
@@ -59,6 +58,7 @@ export class AppModule { }
         tooltipMessage="Select all / Deselect all" 
         selectAllViewLabel="All animal"
         [required] = "true"
+        formControlName="yourFormControl"
         (optionSelect$)="getOptionSelected($event)">
     </mat-select-search-advanced>
 ```
@@ -66,7 +66,7 @@ export class AppModule { }
 **This code is just a sample**
 
 ## Properties - Config Mat-select-search-advance
-### objects and initData (this is your array and init array)
+### objects
 ```js
 // if you wana change array
 this.array = newArray.slice();
@@ -95,14 +95,6 @@ this.array = newArray.slice();
 ```html
  placeholderSearchLabel="Search by name" 
 ```
-### initData (init data in edit mode, example: id value)
-```html
- [initData]="listId" 
-```
-##### or
-```html
- [initData]="1" 
-```
 ### multiple (true or false)
 ```html
  [multiple]="false"
@@ -119,8 +111,6 @@ this.array = newArray.slice();
 ```js
   @Input()
   objects!: TObject[];
-  @Input()
-  initData!: any;
   @Input()
   searchProperties: (keyof TObject)[] = [];
   @Input()

@@ -22,7 +22,8 @@ import { take, takeUntil } from 'rxjs/operators';
            style="margin-left: 10px; margin-top: 2px;" 
            matInput 
            [placeholder]="placeholderSearchLabel"
-           (keydown)="_handleKeydown($event)">
+           (keydown)="_handleKeydown($event)"
+           (keyup)="filterObjectsMulti()">
        </div>
        <!--end search -->
   <div style="height: 30px;" *ngIf="(filteredObjectsMulti | async)?.length === 0">
@@ -77,8 +78,6 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
   @Input()
   objects!: TObject[];
   @Input()
-  initData!: any;
-  @Input()
   searchProperties: (keyof TObject)[] = [];
   @Input()
   indexKey!: keyof TObject;
@@ -99,8 +98,6 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
   @Input() required = true;
   /** Form Group */
   fg!: FormGroup;
-  // selectFormControl!: FormControl;
-  // inputSearchCtrl: FormControl = new FormControl();
   /** list of objects filtered by search keyword */
   public filteredObjectsMulti: ReplaySubject<TObject[]> = new ReplaySubject<TObject[]>(1);
   @ViewChild('multiSelect')
@@ -114,26 +111,12 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
   objectSelected: any;
   onChange!: (objectSelected: any) => void;
   onTouched!: () => void;
-
-  constructor(
-    private fb: FormBuilder,
-    private cdref: ChangeDetectorRef
-  ) { 
-  }
-
-  ngOnInit(): void {
-    this.fg = this.fb.group({
-      selectCtrl: [this.initData],
-      inputSearchCtrl: [],
-    });
-    // console.log(this.objectSelected);
-    this.initSelect();
-    this.checkSelectCtrl();
-    this.compareSelectedAndInitial(this.fg.controls.selectCtrl.value, this.objects)
-  }
-  // custom form
+    // cva
   writeValue(obj: any): void {
-    this.objectSelected = obj;
+    if (obj !== undefined) {
+      this.objectSelected = obj;
+    }
+    this.fg?.controls?.selectCtrl?.patchValue(this.objectSelected);
   }
   registerOnChange(fn: any): void {
     this.onChange = fn;
@@ -149,18 +132,31 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
       this.fg?.controls?.selectCtrl?.enable();
     }
   }
-  //end custom form
+  //end cva
+  constructor(
+    private fb: FormBuilder,
+    private cdref: ChangeDetectorRef
+  ) { 
+  }
+
+  ngOnInit(): void {
+    console.log(this.isCheckAll);
+    this.fg = this.fb.group({
+      selectCtrl: [],
+      inputSearchCtrl: [''],
+    });
+    // this.initSelect();
+    this.checkSelectCtrl();
+    this.checkSelectAll(this.fg.controls.selectCtrl.value, this.objects);
+   
+  }
+
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('objects' in changes) {
       const o = changes['objects'].currentValue;
       this.objects = o;
       this.filteredObjectsMulti.next(this.objects.slice());
-    }
-    if ('initData' in changes){
-      const newInitData = changes['initData'].currentValue;
-      this.initData = newInitData;
-      this.fg?.controls?.selectCtrl?.patchValue(this.initData);
     }
     if ('required' in changes){
       const required = changes['required'].currentValue;
@@ -186,26 +182,27 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
   toggleSelectAll(event: any): void {
     this.isCheckAll = event.checked;
     this.filteredObjectsMulti.pipe(take(1), takeUntil(this._onDestroy))
-      .subscribe(val => {
-        let listObjs = val.map(obj => obj[this.indexKey]);
-        if (this.showToggleAllCheckbox && event.checked) {
-          if (this.fg?.controls?.inputSearchCtrl.value) {
-            this.fg.controls?.selectCtrl?.patchValue([...listObjs, ...this.objectSelected]);
-          } else {
-            this.fg.controls?.selectCtrl?.patchValue(listObjs);
-          } 
+    .subscribe(val => {
+      let listObjs = val.map(obj => obj[this.indexKey]);
+      if (event.checked) {
+        this.objectSelected = this.objectSelected.concat(listObjs.filter((x: any) => !this.objectSelected.includes(x)));
+        this.updateData(this.objectSelected);
+      } else {
+        if (this.fg.value.inputSearchCtrl === '') {
+          this.objectSelected = [];
+          this.updateData(this.objectSelected);
         } else {
-          if (this.fg?.controls?.inputSearchCtrl.value) {
-
-          } else {
-             this.fg.controls?.selectCtrl?.patchValue([]);
-          }
-         
-        }
-      });
+          this.objectSelected = this.objectSelected.filter( (x: any) => !listObjs.includes(x))
+          .concat(listObjs.filter(x => !this.objectSelected.includes(x)));
+          this.updateData(this.objectSelected);
+        }  
+      }
+     
+    });
+   
   }
 
-  protected filterObjectsMulti(): void {
+  filterObjectsMulti(): void {
     // get the search keyword
     let search = this.fg.controls.inputSearchCtrl.value;
     if (!search) {
@@ -215,12 +212,15 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
        // filter the objects with code
     }
     this.filteredObjectsMulti.next(
-      this.objects.filter(object => String(object[this.searchProperties[0]]).toLowerCase().indexOf(search) > -1
-        || String(object[this.searchProperties[1]]).toLowerCase().indexOf(search) > -1
-        || String(object[this.searchProperties[2]]).toLowerCase().indexOf(search) > -1
-        || String(object[this.searchProperties[3]]).toLowerCase().indexOf(search) > -1
-        || String(object[this.searchProperties[4]]).toLowerCase().indexOf(search) > -1
-      )
+      this.objects.filter(object => {
+        let isTrue = false;
+        this.searchProperties.forEach(properties => {
+          if(Boolean(object[properties]) && String(object[properties]).toLowerCase().indexOf(search) > -1){
+            isTrue = true;
+          }
+        })
+        return isTrue;
+      })
     );
 
   }
@@ -229,33 +229,14 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
     this.isCheckAll = false;
     this.fg?.controls?.selectCtrl?.patchValue([]);
   }
+  updateData(data: any): void {
+    this.writeValue(data);
+    this.onChange(data);
+    this.onTouched();
+    this.fg.controls.selectCtrl.patchValue(data);
+    this.checkSelectAll(data, this.objects);
+  }
   checkSelectCtrl(): void {
-    this.fg?.controls?.selectCtrl?.valueChanges.pipe(takeUntil(this._onDestroy))
-    .subscribe(value => { 
-      // console.log(this.objectSelected);
-      // console.log(value);
-      // console.log([...value, ...this.objectSelected]);
-    //  if (this.multiple && this.fg?.controls?.inputSearchCtrl.value) {
-    //   this.writeValue([...value, ...this.objectSelected]);
-    //   this.onChange([...value, ...this.objectSelected]);
-    //   this.onTouched(); 
-    //  } else {
-    //   this.writeValue(value);
-    //   this.onChange(value);
-    //   this.onTouched(); 
-    //  }
-
-      if (this.fg.controls.inputSearchCtrl.value){
-        this.filteredObjectsMulti.subscribe(filters => {
-          // console.log(filters);
-          if (filters.length > 0) {
-            this.compareSelectedAndInitial(value, filters);
-          }
-        });
-      } else {
-        this.compareSelectedAndInitial(value, this.objects);
-      }
-    });
     if (this.required){
         this.fg?.controls?.selectCtrl?.setValidators(Validators.required);
       } else {
@@ -264,11 +245,11 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
   }
   onOpened(): void {
     this.resetInputSearch();
-    this.compareSelectedAndInitial(this.fg?.controls?.selectCtrl.value, this.objects);
+    this.checkSelectAll(this.fg?.controls?.selectCtrl.value, this.objects);
   }
   onClosed(): void {
    this.resetInputSearch();
-   this.compareSelectedAndInitial(this.fg?.controls?.selectCtrl.value, this.objects);
+   this.checkSelectAll(this.fg?.controls?.selectCtrl.value, this.objects);
   }
   resetInputSearch(): void {
     this.fg.controls?.inputSearchCtrl?.patchValue('');
@@ -283,7 +264,7 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
     }
   }
 
-  compareSelectedAndInitial(selectedArray: any, initalArray: any): void {
+  checkSelectAll(selectedArray: any, initalArray: any): void {
     if (selectedArray && initalArray) {
       if (selectedArray?.length !== initalArray?.length) {
        this.isCheckAll = false;
@@ -295,31 +276,26 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
   }
 
   selectOption(data: any) {
-    // this.optionSelected$.emit({ value: data });
-    // if (this.multiple) {
-    //   if (this.objectSelected.find((x: any) => x === data)) {
-    //     this.objectSelected.splice(this.objectSelected.findIndex((x: any) => x === data), 1);
-    //     this.fg?.controls?.selectCtrl.patchValue(this.objectSelected);
-    //   } else {
-    //     this.objectSelected.push(data);
-    //     this.fg?.controls?.selectCtrl.patchValue(this.objectSelected);
-    //   }
-    // }
-    // console.log(data);
-    console.log(data._selected);
+    if (this.multiple) {
+      if (data._selected === true) {
+        this.objectSelected.push(data.value);
+        this.updateData(this.objectSelected);
+      } else {
+        this.objectSelected.splice(this.objectSelected.findIndex((x: any) => x === data.value), 1);
+        this.updateData(this.objectSelected);
+      }
+      this.optionSelected$.emit({ value: data.value, status: data._selected });
+    } else {
+      this.optionSelected$.emit({ value: data.value});
+      this.updateData(data.value);
+    }
   }
 
   initSelect(): void {
      // listen for search field value changes
      this.fg.controls?.inputSearchCtrl?.valueChanges
-    //  .pipe(takeUntil(this._onDestroy))
+     .pipe(takeUntil(this._onDestroy))
      .subscribe(value => {
-       // console.log(value);
-      //  if (value) {
-      //    this.clearAllSelected();
-      //  }
-      //  this.isCheckAll = false;
-       // this.compareSelectedAndInitial(this.objectSelected, this.objects);
        this.filterObjectsMulti();
      });
     // load the initial object list

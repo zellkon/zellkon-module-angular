@@ -11,7 +11,6 @@
       noEntriesFoundLabel="Found nothing" 
       tooltipMessage="Select all / Deselect all" 
       selectAllViewLabel="All animal"
-      [initData] = "[1,2]"
       appearance = "outline"
       [multiple] = "true"
       [required] = "true"
@@ -33,10 +32,9 @@
       messageErrorRequired="You need select some thing"
       noEntriesFoundLabel="Found nothing" 
       tooltipMessage="Select all / Deselect all" 
-      selectAllViewLabel="All animal"
       [multiple]="false"
       [required] = "true"
-      [initData] = "1"
+      (optionSelected$)="optionSelected($event)"
       formControlName="selectCtrlSingle">
   </mat-select-search-advanced>
   <button mat-raised-button (click)="updateObject()">Change Array Data</button>

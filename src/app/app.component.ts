@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
       console.log(data);
     });
     this.selectFormGroup.controls.selectCtrlMultiple.valueChanges.subscribe(data => {
-      console.log('value selected' + data);
+      console.log('value selected: ' + data);
     });
     this.selectFormGroup.controls.timePicker.valueChanges.subscribe(data => {
       console.log(data);
@@ -52,7 +52,7 @@ export class AppComponent implements OnInit {
     // console.log(result);
   }
   optionSelected(data: any){
-    // console.log(data);
+    console.log(data);
   }
   updateObject(){
     this.objects = [
@@ -68,6 +68,12 @@ export class AppComponent implements OnInit {
         age: 22,
         job: 'Sleep',
       },
+      {
+        id: 3,
+        name: 'Fish',
+        age: 22,
+        job: 'Wake',
+      },
 
     ];
     this.objects = this.objects.slice();
@@ -75,7 +81,7 @@ export class AppComponent implements OnInit {
   updateInitObject(){
     // this.initDataArray.next([1,2]);
     this.init = 2;
-    this.initArray = [1,2,3,4,5,6,7,8,9].slice();
+    this.selectFormGroup.controls.selectCtrlMultiple.patchValue([1,2,3]);
   }
 
   getValidateMessage(controlName: string): string {

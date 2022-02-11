@@ -140,12 +140,10 @@ export class MatSelectSearchAdvancedComponent<TObject extends object> implements
   }
 
   ngOnInit(): void {
-    console.log(this.isCheckAll);
     this.fg = this.fb.group({
       selectCtrl: [],
       inputSearchCtrl: [''],
     });
-    // this.initSelect();
     this.checkSelectCtrl();
     this.checkSelectAll(this.fg.controls.selectCtrl.value, this.objects);
    
